@@ -223,6 +223,11 @@ float		ps_r__test_exp_to_shaders_4	= 1.0f;
 //- Mad Max
 float		ps_r2_gloss_factor			= 4.0f;
 //- Mad Max
+
+float ps_r__img_exposure = 1.0f;
+float ps_r__img_gamma = 1.0f;
+float ps_r__img_saturation = 1.0f;
+
 #ifndef _EDITOR
 #include	"../../xrEngine/xr_ioconsole.h"
 #include	"../../xrEngine/xr_ioc_cmd.h"
@@ -898,6 +903,11 @@ void		xrRender_initconsole	()
 	CMD1(CCC_RenderDocCaptureStart,	"rdoc_start");
 	CMD1(CCC_RenderDocCaptureEnd,	"rdoc_end");
 #endif
+
+	// Color Corrections
+	CMD4(CCC_Float, "r__exposure", &ps_r__img_exposure, 0.5f, 1.5f);
+	CMD4(CCC_Float, "r__gamma", &ps_r__img_gamma, 0.5f, 1.5f);
+	CMD4(CCC_Float, "r__saturation", &ps_r__img_saturation, 0.0f, 1.5f);
 
 	// test
 	CMD4(CCC_Float,		"r_developer_float_1",				&ps_r__test_exp_to_shaders_1, -10000000.0f, 10000000.0f);

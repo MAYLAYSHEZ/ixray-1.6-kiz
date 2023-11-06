@@ -303,6 +303,12 @@ static class cl_screen_res : public R_constant_setup
 	}
 }	binder_screen_res;
 
+static class pp_image_agc : public R_constant_setup {
+	virtual void setup(R_constant* C) {
+		RCache.set_c(C, ps_r__img_exposure, ps_r__img_gamma, ps_r__img_saturation, 1);
+	}
+} pp_image_agc;
+
 static class cl_def_aref : public R_constant_setup
 {
 	virtual void setup(R_constant* C) override {
@@ -385,6 +391,9 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant				("screen_res",		&binder_screen_res);
 	r_Constant				("def_aref",		&binder_def_aref);
 	
+	// Advanced Gamma Control
+	r_Constant("pp_img_agc", &pp_image_agc);
+
 	// Rain
 	r_Constant				("rain_params",		&binder_rain_params);
 

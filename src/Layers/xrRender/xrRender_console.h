@@ -137,6 +137,10 @@ extern  float					ps_r__test_exp_to_shaders_2;
 extern  float					ps_r__test_exp_to_shaders_3;
 extern  float					ps_r__test_exp_to_shaders_4;
 
+extern ECORE_API float ps_r__img_exposure;
+extern ECORE_API float ps_r__img_gamma;
+extern ECORE_API float ps_r__img_saturation;
+
 enum
 {
 	R2FLAG_SUN					= (1<<0),
