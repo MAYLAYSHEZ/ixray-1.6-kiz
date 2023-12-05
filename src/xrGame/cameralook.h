@@ -27,22 +27,31 @@ public:
 
 protected:
 	void UpdateDistance(const Fvector& point);
+
+private:
 	bool IsTrianglePassable(const CDB::TRI& triangle) const;
 	void AdjustPositionOnCollision(const collide::rq_result& collisionResult, float covariance);
 };
 
-class CCameraLook2	: public CCameraLook
+class CCameraLook2 : public CCameraLook
 {
+	Fmatrix CalculateDynamicRotations(const Fvector& noiseAngles);
+	Fmatrix CombineOrientations(const Fmatrix& dynamicRotations);
+	Fmatrix CalculateCombinedMatrix(const Fmatrix& combinedOrientation);
+	void UpdateCameraVectors(const Fmatrix& orientationMatrix);
+	void UpdateCameraPosition(const Fvector& point);
+	Fvector CalculateCameraOffset();
+
 public:
 	static Fvector	m_cam_offset_r;
 	static Fvector	m_cam_offset_l;
 
 	CCameraLook2(CObject* p, u32 flags = 0) : CCameraLook(p, flags) {};
 
-	virtual			~CCameraLook2	(){}
-	virtual	void	OnActivate		( CCameraBase* old_cam );
-	virtual void	Update			( Fvector& point, Fvector& noise_dangle );
-	virtual void	Load			(LPCSTR section);
+	virtual			~CCameraLook2() {}
+	virtual	void	OnActivate(CCameraBase* old_cam);
+	virtual void	Update(Fvector& point, Fvector& noise_dangle);
+	virtual void	Load(LPCSTR section);
 };
 
 class CCameraFixedLook : public CCameraLook
