@@ -197,10 +197,10 @@ void CWeapon::UpdateXForm	()
 		mRes.mulA_43		(E->XFORM());
 	}
 
-	if (CurrSlot() == INV_SLOT_3)
-		UpdatePosition(mRes);
-	else if (CurrSlot() == INV_SLOT_2)
+	if (CurrSlot() == INV_SLOT_2)
 		UpdatePosition_alt(mRes);
+	else
+		UpdatePosition(mRes);
 }
 
 void CWeapon::UpdateFireDependencies_internal()
