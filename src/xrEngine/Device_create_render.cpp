@@ -52,6 +52,8 @@ void fill_vid_mode_list()
 	R_CHK(CreateDXGIFactory(IID_PPV_ARGS(&pFactory)));
 	pFactory->EnumAdapters(0, &pAdapter);
 	pAdapter->EnumOutputs(0, &pOutput);
+	pAdapter->Release();
+	pFactory->Release();
 	VERIFY(pOutput);
 
 	UINT num = 0;
