@@ -123,71 +123,28 @@ void CCameraLook2::OnActivate( CCameraBase* old_cam )
 	CCameraLook::OnActivate( old_cam );
 }
 
-void CCameraLook2::Update(Fvector& point, Fvector& noise_dangle) {
-	// Calculate dynamic rotations based on noise_dangle
-	Fmatrix dynamicRotations = CalculateDynamicRotations(noise_dangle);
+void CCameraLook2::Update(Fvector& point, Fvector&)
+{
+	Fmatrix mR;
+	mR.setHPB						(-yaw,-pitch,-roll);
 
-	// Combine dynamic rotations with existing camera orientation
-	Fmatrix combinedOrientation = CombineOrientations(dynamicRotations);
+	vDirection.set					(mR.k);
+	vNormal.set						(mR.j);
 
-	// Update camera vectors based on the combined orientation
-	UpdateCameraVectors(CalculateCombinedMatrix(combinedOrientation));
+	Fmatrix							a_xform;
+	a_xform.setXYZ					(0, -yaw, 0);
+	a_xform.translate_over			(point);
 
-	// Apply translation and set camera position
-	UpdateCameraPosition(point);
-}
+	Fvector _off;
+	if (psActorFlags.test(AF_RIGHT_SHOULDER))
+		_off = m_cam_offset_r;
+	else
+		_off = m_cam_offset_l;
 
-Fmatrix CCameraLook2::CalculateDynamicRotations(const Fvector& noiseAngles) {
-	Fmatrix rX, rY, rZ;
-	rX.rotateX(noiseAngles.x);
-	rY.rotateY(-noiseAngles.y);
-	rZ.rotateZ(noiseAngles.z);
+	a_xform.transform_tiny			(_off);
+	vPosition.set					(_off);
 
-	Fmatrix dynamicRotations;
-	dynamicRotations.mul_43(rY, rX);
-	dynamicRotations.mulB_43(rZ);
-
-	return dynamicRotations;
-}
-
-Fmatrix CCameraLook2::CombineOrientations(const Fmatrix& dynamicRotations) {
-	Fmatrix orientationMatrix;
-
-	return orientationMatrix.mulB_43(dynamicRotations);
-}
-
-Fmatrix CCameraLook2::CalculateCombinedMatrix(const Fmatrix& combinedOrientation) {
-	Fquaternion orientationQuaternion;
-	orientationQuaternion.rotationYawPitchRoll(roll, yaw, pitch);
-
-	Fmatrix orientationMatrix = combinedOrientation;
-	orientationMatrix.identity();
-	orientationMatrix.rotation(orientationQuaternion);
-	orientationMatrix.transpose();
-
-	return orientationMatrix;
-}
-
-void CCameraLook2::UpdateCameraVectors(const Fmatrix& orientationMatrix) {
-	vDirection.set(orientationMatrix.k);
-	vNormal.set(orientationMatrix.j);
-}
-
-void CCameraLook2::UpdateCameraPosition(const Fvector& point) {
-	Fmatrix transformMatrix;
-	transformMatrix.setXYZ(0, -yaw, 0);
-	transformMatrix.translate_over(point);
-
-	Fvector cameraOffset = CalculateCameraOffset();
-	transformMatrix.transform_tiny(cameraOffset);
-	vPosition.set(cameraOffset);
-
-	// Check for collisions and adjust position if necessary
-	UpdateDistance(cameraOffset);
-}
-
-Fvector CCameraLook2::CalculateCameraOffset() {
-	return (psActorFlags.test(AF_RIGHT_SHOULDER)) ? m_cam_offset_r : m_cam_offset_l;
+	UpdateDistance(_off);
 }
 
 void CCameraLook2::Load(LPCSTR section)
