@@ -26,9 +26,7 @@ public:
 	void load(IReader& input_packet) override;
 
 protected:
-	void UpdateDistance(const Fvector& point);
-	bool IsTrianglePassable(const CDB::TRI& triangle) const;
-	void AdjustPositionOnCollision(const collide::rq_result& collisionResult, float covariance);
+			void	UpdateDistance	( Fvector& point );
 };
 
 class CCameraLook2	: public CCameraLook

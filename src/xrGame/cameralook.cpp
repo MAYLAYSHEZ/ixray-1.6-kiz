@@ -6,7 +6,6 @@
 #include "xr_level_controller.h"
 #include "actor.h"
 #include "object_broker.h"
-#include "../xrEngine/GameMtlLib.h"
 
 CCameraLook::CCameraLook(CObject* p, u32 flags ) 
 :CCameraBase(p, flags)
@@ -52,34 +51,20 @@ void CCameraLook::Update(Fvector& point, Fvector& /**noise_dangle/**/)
 	UpdateDistance		(point);
 }
 
-void CCameraLook::UpdateDistance(const Fvector& point) {
-	Fvector invertedDirection;
-	invertedDirection.invert(vDirection);
+void CCameraLook::UpdateDistance(Fvector& point) 
+{
+	Fvector vDir;
+	vDir.invert(vDirection);
 
-	collide::rq_result result;
+	collide::rq_result R;
 	float covariance = VIEWPORT_NEAR * 6.0f;
-	g_pGameLevel->ObjectSpace.RayPick(point, invertedDirection, dist + covariance, collide::rqtBoth, result, parent);
+	g_pGameLevel->ObjectSpace.RayPick(point, vDir, dist + covariance, collide::rqtBoth, R, parent);
 
-	CDB::TRI* hitTriangle = Level().ObjectSpace.GetStaticTris() + result.element;
-	bool isPassable = IsTrianglePassable(*hitTriangle);
-
-	if (!isPassable)
-		AdjustPositionOnCollision(result, covariance);
-	else
-		vPosition.mul(vDirection, -prev_d - VIEWPORT_NEAR);
-
-	vPosition.add(point);
-}
-
-bool CCameraLook::IsTrianglePassable(const CDB::TRI& triangle) const {
-	return triangle.material < GMLib.CountMaterial() &&
-		GMLib.GetMaterialByIdx(triangle.material)->Flags.is(SGameMtl::flPassable);
-}
-
-void CCameraLook::AdjustPositionOnCollision(const collide::rq_result& collisionResult, float covariance) {
-	float d = psCamSlideInert * prev_d + (1.0f - psCamSlideInert) * (collisionResult.range - covariance);
+	float d = psCamSlideInert * prev_d + (1.0f - psCamSlideInert) * (R.range - covariance);
 	prev_d = d;
+
 	vPosition.mul(vDirection, -d - VIEWPORT_NEAR);
+	vPosition.add(point);
 }
 
 void CCameraLook::Move( int cmd, float val, float factor)
