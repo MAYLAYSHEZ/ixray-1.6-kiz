@@ -347,6 +347,10 @@ public:
 	float				GetGameDayTimeSec		();
 	float				GetEnvironmentGameDayTimeSec();
 
+	virtual float		GetEnvironmentTimeFactor() const override;
+	virtual void		SetEnvironmentTimeFactor(const float fTimeFactor) override;
+	virtual u64			GetEnvironmentGameTime() const override;
+
 protected:
 //	CFogOfWarMngr*		m_pFogOfWarMngr;
 protected:	
