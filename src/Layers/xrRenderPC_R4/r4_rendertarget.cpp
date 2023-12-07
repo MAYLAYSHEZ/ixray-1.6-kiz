@@ -361,6 +361,7 @@ CRenderTarget::CRenderTarget		()
 		if (!ImGui::Begin("GraphicDebug", &Engine.External.EditorStates[static_cast<std::uint8_t>(EditorUI::Shaders)], ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse)) {
 			Engine.External.EditorStates[static_cast<std::uint8_t>(EditorUI::Shaders)] = false;
 			ImGui::End();
+			return;
 		}
 
 		DisplayTarget(rt_Generic_0);
