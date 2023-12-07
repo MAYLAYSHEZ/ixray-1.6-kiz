@@ -296,18 +296,20 @@ xr_map<xr_string, float> PowerMap;
 
 CRenderTarget::CRenderTarget		()
 {
-	D3D11_BLEND_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.AlphaToCoverageEnable = false;
-	desc.RenderTarget[0].BlendEnable = false;
-	desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	desc.RenderTarget[0].DestBlend = D3D11_BLEND_DEST_COLOR;
-	desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	R_CHK(RDevice->CreateBlendState(&desc, &g_debug_blend_state));
+	if (g_debug_blend_state == nullptr) {
+		D3D11_BLEND_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.AlphaToCoverageEnable = false;
+		desc.RenderTarget[0].BlendEnable = false;
+		desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		desc.RenderTarget[0].DestBlend = D3D11_BLEND_DEST_COLOR;
+		desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		R_CHK(RDevice->CreateBlendState(&desc, &g_debug_blend_state));
+	}
 
 	Device.AddUICommand("GraphicDebug", 2, [this]() {
 		if (!ps_r__GraphicDebug) {
@@ -978,6 +980,10 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete					(b_hdao_cs				);
 
 	Device.RemoveUICommand("GraphicDebug");
+	if (g_debug_blend_state != nullptr) {
+		g_debug_blend_state->Release();
+		g_debug_blend_state = nullptr;
+	}
 }
 
 void CRenderTarget::reset_light_marker( bool bResetStencil)
